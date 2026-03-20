@@ -20,20 +20,20 @@
     depends: #gen-build-qt-api
 ## Iteration 1: Message Bus + State Machine [#iter-1]
 
-- [ ] Implement message bus [#gen-bus]
+- [x] Implement message bus [#gen-bus]
     depends: #iter-0
     docs: docs/plans/2026-03-20-genesis-design.md#message-bus
-    - [ ] Message dataclass and serialization [#gen-bus-model]
-    - [ ] publish() — write JSON file [#gen-bus-publish]
-    - [ ] query() — filter by agent, event, task [#gen-bus-query]
-    - [ ] Tests for message bus [#gen-bus-tests]
-- [ ] Implement state machine [#gen-state]
+    - [x] Message dataclass and serialization [#gen-bus-model]
+    - [x] publish() — write JSON file [#gen-bus-publish]
+    - [x] query() — filter by agent, event, task [#gen-bus-query]
+    - [x] Tests for message bus [#gen-bus-tests]
+- [x] Implement state machine [#gen-state]
     depends: #gen-bus
     docs: docs/plans/2026-03-20-genesis-design.md#state-machine
-    - [ ] VALID_TRANSITIONS table [#gen-state-transitions]
-    - [ ] transition() with bus event publishing [#gen-state-transition]
-    - [ ] Invalid transition rejection [#gen-state-invalid]
-    - [ ] Tests for all transitions [#gen-state-tests]
+    - [x] VALID_TRANSITIONS table [#gen-state-transitions]
+    - [x] transition() with bus event publishing [#gen-state-transition]
+    - [x] Invalid transition rejection [#gen-state-invalid]
+    - [x] Tests for all transitions [#gen-state-tests]
 ## Iteration 2: Tools + Config [#iter-2]
 
 - [ ] Implement config loader [#gen-config]
