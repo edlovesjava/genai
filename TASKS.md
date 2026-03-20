@@ -79,12 +79,12 @@
     depends: #gen-builder
 ## Iteration 5: Runner + End-to-End [#iter-5]
 
-- [ ] Implement genesis runner / orchestrator [#gen-runner]
+- [x] Implement genesis runner / orchestrator [#gen-runner]
     depends: #iter-4
     docs: docs/plans/2026-03-20-genesis-design.md#runner
-- [ ] Implement human gate mechanism [#gen-gates]
+- [x] Implement human gate mechanism [#gen-gates]
     depends: #gen-runner
-- [ ] End-to-end integration test (mocked LLM) [#gen-e2e-test]
+- [x] End-to-end integration test (mocked LLM) [#gen-e2e-test]
     depends: #gen-runner
 - [ ] First real loop on quick-task improvement [#gen-first-loop]
     depends: #gen-e2e-test
