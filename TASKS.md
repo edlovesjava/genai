@@ -1,0 +1,98 @@
+# Genesis Kernel [#genesis]
+
+## Iteration 0: Foundation [#iter-0]
+
+- [ ] Create pyproject.toml with dependencies [#gen-pyproject]
+    depends: #iter-0
+    docs: docs/plans/2026-03-20-genesis-design.md#tech-stack
+- [ ] Create src/genesis package skeleton [#gen-skeleton]
+    depends: #gen-pyproject
+- [ ] Set up pytest configuration and trivial test [#gen-pytest]
+    depends: #gen-skeleton
+- [ ] Verify editable install of quick-task works [#gen-qt-import]
+    depends: #gen-skeleton
+    depends: #qt-api
+
+## Iteration 1: Message Bus + State Machine [#iter-1]
+
+- [ ] Implement message bus [#gen-bus]
+    depends: #iter-0
+    docs: docs/plans/2026-03-20-genesis-design.md#message-bus
+    - [ ] Message dataclass and serialization [#gen-bus-model]
+    - [ ] publish() — write JSON file [#gen-bus-publish]
+    - [ ] query() — filter by agent, event, task [#gen-bus-query]
+    - [ ] Tests for message bus [#gen-bus-tests]
+- [ ] Implement state machine [#gen-state]
+    depends: #gen-bus
+    docs: docs/plans/2026-03-20-genesis-design.md#state-machine
+    - [ ] VALID_TRANSITIONS table [#gen-state-transitions]
+    - [ ] transition() with bus event publishing [#gen-state-transition]
+    - [ ] Invalid transition rejection [#gen-state-invalid]
+    - [ ] Tests for all transitions [#gen-state-tests]
+
+## Iteration 2: Tools + Config [#iter-2]
+
+- [ ] Implement config loader [#gen-config]
+    depends: #iter-1
+    docs: docs/plans/2026-03-20-genesis-design.md#configuration
+- [ ] Create genesis.toml with bootstrap defaults [#gen-toml]
+    depends: #gen-config
+- [ ] Implement task operations tool [#gen-tool-task]
+    depends: #gen-state
+    depends: #qt-api
+- [ ] Implement file operations tool [#gen-tool-file]
+    depends: #gen-config
+- [ ] Implement git operations tool [#gen-tool-git]
+    depends: #gen-config
+- [ ] Implement test runner tool [#gen-tool-test]
+    depends: #gen-config
+- [ ] Tests for all tools [#gen-tools-tests]
+    depends: #gen-tool-task
+    depends: #gen-tool-file
+    depends: #gen-tool-git
+    depends: #gen-tool-test
+
+## Iteration 3: Base Agent + Context [#iter-3]
+
+- [ ] Implement base agent LLM loop [#gen-agent-base]
+    depends: #iter-2
+    docs: docs/plans/2026-03-20-genesis-design.md#base-agent
+    - [ ] System prompt loading [#gen-agent-prompt]
+    - [ ] Tool dispatch [#gen-agent-tools]
+    - [ ] Budget tracking [#gen-agent-budget]
+    - [ ] Retry and error handling [#gen-agent-retry]
+- [ ] Implement context manager [#gen-context]
+    depends: #gen-bus
+    docs: docs/plans/2026-03-20-genesis-design.md#context-manager
+- [ ] Tests with mocked LLM [#gen-agent-tests]
+    depends: #gen-agent-base
+    depends: #gen-context
+
+## Iteration 4: Planner + Builder Agents [#iter-4]
+
+- [ ] Write planner system prompt [#gen-planner-prompt]
+    docs: prompts/planner_system.md
+- [ ] Write builder system prompt [#gen-builder-prompt]
+    docs: prompts/builder_system.md
+- [ ] Implement planner agent [#gen-planner]
+    depends: #gen-agent-base
+    depends: #gen-planner-prompt
+- [ ] Implement builder agent [#gen-builder]
+    depends: #gen-agent-base
+    depends: #gen-builder-prompt
+- [ ] Tests for planner and builder [#gen-agents-tests]
+    depends: #gen-planner
+    depends: #gen-builder
+
+## Iteration 5: Runner + End-to-End [#iter-5]
+
+- [ ] Implement genesis runner / orchestrator [#gen-runner]
+    depends: #iter-4
+    docs: docs/plans/2026-03-20-genesis-design.md#runner
+- [ ] Implement human gate mechanism [#gen-gates]
+    depends: #gen-runner
+- [ ] End-to-end integration test (mocked LLM) [#gen-e2e-test]
+    depends: #gen-runner
+- [ ] First real loop on quick-task improvement [#gen-first-loop]
+    depends: #gen-e2e-test
+    docs: spec/bootstrap-spec.md#the-first-project
