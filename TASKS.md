@@ -53,17 +53,17 @@
     depends: #gen-tool-test
 ## Iteration 3: Base Agent + Context [#iter-3]
 
-- [ ] Implement base agent LLM loop [#gen-agent-base]
+- [x] Implement base agent LLM loop [#gen-agent-base]
     depends: #iter-2
     docs: docs/plans/2026-03-20-genesis-design.md#base-agent
-    - [ ] System prompt loading [#gen-agent-prompt]
-    - [ ] Tool dispatch [#gen-agent-tools]
-    - [ ] Budget tracking [#gen-agent-budget]
-    - [ ] Retry and error handling [#gen-agent-retry]
-- [ ] Implement context manager [#gen-context]
+    - [x] System prompt loading [#gen-agent-prompt]
+    - [x] Tool dispatch [#gen-agent-tools]
+    - [x] Budget tracking [#gen-agent-budget]
+    - [x] Retry and error handling [#gen-agent-retry]
+- [x] Implement context manager [#gen-context]
     depends: #gen-bus
     docs: docs/plans/2026-03-20-genesis-design.md#context-manager
-- [ ] Tests with mocked LLM [#gen-agent-tests]
+- [x] Tests with mocked LLM [#gen-agent-tests]
     depends: #gen-context
 ## Iteration 4: Planner + Builder Agents [#iter-4]
 
