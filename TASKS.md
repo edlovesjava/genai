@@ -67,15 +67,15 @@
     depends: #gen-context
 ## Iteration 4: Planner + Builder Agents [#iter-4]
 
-- [ ] Write planner system prompt [#gen-planner-prompt]
+- [x] Write planner system prompt [#gen-planner-prompt]
     docs: prompts/planner_system.md
-- [ ] Write builder system prompt [#gen-builder-prompt]
+- [x] Write builder system prompt [#gen-builder-prompt]
     docs: prompts/builder_system.md
-- [ ] Implement planner agent [#gen-planner]
+- [x] Implement planner agent [#gen-planner]
     depends: #gen-planner-prompt
-- [ ] Implement builder agent [#gen-builder]
+- [x] Implement builder agent [#gen-builder]
     depends: #gen-builder-prompt
-- [ ] Tests for planner and builder [#gen-agents-tests]
+- [x] Tests for planner and builder [#gen-agents-tests]
     depends: #gen-builder
 ## Iteration 5: Runner + End-to-End [#iter-5]
 
