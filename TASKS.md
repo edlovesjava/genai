@@ -2,6 +2,13 @@
 
 ## Iteration 0: Foundation [#iter-0]
 
+- [ ] Build quick-task Python API module [#gen-build-qt-api]
+    - [ ] Create src/quick_task/api.py in quick-task repo [#gen-build-qt-api-module]
+    - [ ] load_file() convenience function [#gen-build-qt-api-load]
+    - [ ] get_task() wrapping matcher.find_task [#gen-build-qt-api-get]
+    - [ ] Re-export add_task, update_status, list_tasks [#gen-build-qt-api-reexport]
+    - [ ] Tests for API module in quick-task repo [#gen-build-qt-api-tests]
+    - [ ] CLI imports from API (thin wrapper) [#gen-build-qt-api-cli]
 - [ ] Create pyproject.toml with dependencies [#gen-pyproject]
     depends: #iter-0
     docs: docs/plans/2026-03-20-genesis-design.md#tech-stack
@@ -11,7 +18,7 @@
     depends: #gen-skeleton
 - [ ] Verify editable install of quick-task works [#gen-qt-import]
     depends: #gen-skeleton
-    depends: #qt-api
+    depends: #gen-build-qt-api
 
 ## Iteration 1: Message Bus + State Machine [#iter-1]
 
@@ -39,7 +46,7 @@
     depends: #gen-config
 - [ ] Implement task operations tool [#gen-tool-task]
     depends: #gen-state
-    depends: #qt-api
+    depends: #gen-build-qt-api
 - [ ] Implement file operations tool [#gen-tool-file]
     depends: #gen-config
 - [ ] Implement git operations tool [#gen-tool-git]
