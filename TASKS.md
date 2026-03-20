@@ -1,14 +1,14 @@
-# Genesis Kernel [#genesis]
+## Genesis Kernel [#genesis]
 
 ## Iteration 0: Foundation [#iter-0]
 
-- [ ] Build quick-task Python API module [#gen-build-qt-api]
-    - [ ] Create src/quick_task/api.py in quick-task repo [#gen-build-qt-api-module]
-    - [ ] load_file() convenience function [#gen-build-qt-api-load]
-    - [ ] get_task() wrapping matcher.find_task [#gen-build-qt-api-get]
-    - [ ] Re-export add_task, update_status, list_tasks [#gen-build-qt-api-reexport]
-    - [ ] Tests for API module in quick-task repo [#gen-build-qt-api-tests]
-    - [ ] CLI imports from API (thin wrapper) [#gen-build-qt-api-cli]
+- [x] Build quick-task Python API module [#gen-build-qt-api]
+    - [x] Create src/quick_task/api.py in quick-task repo [#gen-build-qt-api-module]
+    - [x] load_file() convenience function [#gen-build-qt-api-load]
+    - [x] get_task() wrapping matcher.find_task [#gen-build-qt-api-get]
+    - [x] Re-export add_task, update_status, list_tasks [#gen-build-qt-api-reexport]
+    - [x] Tests for API module in quick-task repo [#gen-build-qt-api-tests]
+    - [x] CLI imports from API (thin wrapper) [#gen-build-qt-api-cli]
 - [ ] Create pyproject.toml with dependencies [#gen-pyproject]
     depends: #iter-0
     docs: docs/plans/2026-03-20-genesis-design.md#tech-stack
@@ -17,9 +17,7 @@
 - [ ] Set up pytest configuration and trivial test [#gen-pytest]
     depends: #gen-skeleton
 - [ ] Verify editable install of quick-task works [#gen-qt-import]
-    depends: #gen-skeleton
     depends: #gen-build-qt-api
-
 ## Iteration 1: Message Bus + State Machine [#iter-1]
 
 - [ ] Implement message bus [#gen-bus]
@@ -36,7 +34,6 @@
     - [ ] transition() with bus event publishing [#gen-state-transition]
     - [ ] Invalid transition rejection [#gen-state-invalid]
     - [ ] Tests for all transitions [#gen-state-tests]
-
 ## Iteration 2: Tools + Config [#iter-2]
 
 - [ ] Implement config loader [#gen-config]
@@ -45,7 +42,6 @@
 - [ ] Create genesis.toml with bootstrap defaults [#gen-toml]
     depends: #gen-config
 - [ ] Implement task operations tool [#gen-tool-task]
-    depends: #gen-state
     depends: #gen-build-qt-api
 - [ ] Implement file operations tool [#gen-tool-file]
     depends: #gen-config
@@ -54,11 +50,7 @@
 - [ ] Implement test runner tool [#gen-tool-test]
     depends: #gen-config
 - [ ] Tests for all tools [#gen-tools-tests]
-    depends: #gen-tool-task
-    depends: #gen-tool-file
-    depends: #gen-tool-git
     depends: #gen-tool-test
-
 ## Iteration 3: Base Agent + Context [#iter-3]
 
 - [ ] Implement base agent LLM loop [#gen-agent-base]
@@ -72,9 +64,7 @@
     depends: #gen-bus
     docs: docs/plans/2026-03-20-genesis-design.md#context-manager
 - [ ] Tests with mocked LLM [#gen-agent-tests]
-    depends: #gen-agent-base
     depends: #gen-context
-
 ## Iteration 4: Planner + Builder Agents [#iter-4]
 
 - [ ] Write planner system prompt [#gen-planner-prompt]
@@ -82,15 +72,11 @@
 - [ ] Write builder system prompt [#gen-builder-prompt]
     docs: prompts/builder_system.md
 - [ ] Implement planner agent [#gen-planner]
-    depends: #gen-agent-base
     depends: #gen-planner-prompt
 - [ ] Implement builder agent [#gen-builder]
-    depends: #gen-agent-base
     depends: #gen-builder-prompt
 - [ ] Tests for planner and builder [#gen-agents-tests]
-    depends: #gen-planner
     depends: #gen-builder
-
 ## Iteration 5: Runner + End-to-End [#iter-5]
 
 - [ ] Implement genesis runner / orchestrator [#gen-runner]
