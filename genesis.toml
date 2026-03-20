@@ -1,0 +1,28 @@
+[genesis]
+project_name = "genesis"
+tasks_file = "TASKS.md"
+genesis_dir = ".genesis"
+
+[llm]
+provider = "anthropic"
+default_model = "claude-sonnet-4-6"
+reasoning_model = "claude-opus-4-6"
+max_retries = 3
+
+[budget]
+planner_max_tokens = 100000
+builder_max_tokens = 200000
+daily_cap_tokens = 1000000
+warn_threshold = 0.8
+
+[agents.planner]
+system_prompt = "prompts/planner_system.md"
+tools = ["read_file", "list_tasks", "update_task_status", "add_task", "write_file"]
+
+[agents.builder]
+system_prompt = "prompts/builder_system.md"
+tools = ["read_file", "write_file", "list_tasks", "update_task_status", "git_create_branch", "git_commit", "git_open_pr", "run_tests"]
+
+[human_gates]
+protected_paths = [".github/", "genesis.toml", "pyproject.toml"]
+require_approval = ["merge", "delete", "push_main"]

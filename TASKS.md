@@ -36,20 +36,20 @@
     - [x] Tests for all transitions [#gen-state-tests]
 ## Iteration 2: Tools + Config [#iter-2]
 
-- [ ] Implement config loader [#gen-config]
+- [x] Implement config loader [#gen-config]
     depends: #iter-1
     docs: docs/plans/2026-03-20-genesis-design.md#configuration
-- [ ] Create genesis.toml with bootstrap defaults [#gen-toml]
+- [x] Create genesis.toml with bootstrap defaults [#gen-toml]
     depends: #gen-config
-- [ ] Implement task operations tool [#gen-tool-task]
+- [x] Implement task operations tool [#gen-tool-task]
     depends: #gen-build-qt-api
-- [ ] Implement file operations tool [#gen-tool-file]
+- [x] Implement file operations tool [#gen-tool-file]
     depends: #gen-config
-- [ ] Implement git operations tool [#gen-tool-git]
+- [x] Implement git operations tool [#gen-tool-git]
     depends: #gen-config
-- [ ] Implement test runner tool [#gen-tool-test]
+- [x] Implement test runner tool [#gen-tool-test]
     depends: #gen-config
-- [ ] Tests for all tools [#gen-tools-tests]
+- [x] Tests for all tools [#gen-tools-tests]
     depends: #gen-tool-test
 ## Iteration 3: Base Agent + Context [#iter-3]
 
