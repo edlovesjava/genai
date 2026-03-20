@@ -9,14 +9,14 @@
     - [x] Re-export add_task, update_status, list_tasks [#gen-build-qt-api-reexport]
     - [x] Tests for API module in quick-task repo [#gen-build-qt-api-tests]
     - [x] CLI imports from API (thin wrapper) [#gen-build-qt-api-cli]
-- [ ] Create pyproject.toml with dependencies [#gen-pyproject]
+- [x] Create pyproject.toml with dependencies [#gen-pyproject]
     depends: #iter-0
     docs: docs/plans/2026-03-20-genesis-design.md#tech-stack
-- [ ] Create src/genesis package skeleton [#gen-skeleton]
+- [x] Create src/genesis package skeleton [#gen-skeleton]
     depends: #gen-pyproject
-- [ ] Set up pytest configuration and trivial test [#gen-pytest]
+- [x] Set up pytest configuration and trivial test [#gen-pytest]
     depends: #gen-skeleton
-- [ ] Verify editable install of quick-task works [#gen-qt-import]
+- [x] Verify editable install of quick-task works [#gen-qt-import]
     depends: #gen-build-qt-api
 ## Iteration 1: Message Bus + State Machine [#iter-1]
 
