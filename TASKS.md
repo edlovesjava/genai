@@ -93,7 +93,7 @@
 
 - [x] Sliding window on message history
 - [x] Truncate read_file tool output
-- [ ] Truncate linked docs in context manager
+- [x] Truncate linked docs in context manager
 - [ ] Remove duplicate tool descriptions from system prompt
 ## quick-task Improvements [#qt-improvements]
 
