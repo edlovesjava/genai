@@ -45,8 +45,17 @@ class StateMachine:
         # In-memory map of bookmark → genesis status (richer than quick-task).
         self._status_cache: dict[str, str] = {}
 
+    @staticmethod
+    def _normalize_bookmark(bookmark: str) -> str:
+        """Ensure bookmark has the '#' prefix required by quick-task matcher."""
+        bookmark = bookmark.strip()
+        if not bookmark.startswith("#"):
+            bookmark = f"#{bookmark}"
+        return bookmark
+
     def get_status(self, bookmark: str) -> str:
         """Return the current Genesis status for a task."""
+        bookmark = self._normalize_bookmark(bookmark)
         if bookmark in self._status_cache:
             return self._status_cache[bookmark]
         # Derive from quick-task status on first access.
@@ -56,6 +65,7 @@ class StateMachine:
 
     def can_transition(self, bookmark: str, to_status: str) -> bool:
         """Check whether a transition is valid without performing it."""
+        bookmark = self._normalize_bookmark(bookmark)
         current = self.get_status(bookmark)
         return to_status in VALID_TRANSITIONS.get(current, [])
 
@@ -63,6 +73,7 @@ class StateMachine:
         self, bookmark: str, to_status: str, actor: str, reason: str
     ) -> None:
         """Perform a state transition, update quick-task, and publish to bus."""
+        bookmark = self._normalize_bookmark(bookmark)
         current = self.get_status(bookmark)
         allowed = VALID_TRANSITIONS.get(current, [])
         if to_status not in allowed:
@@ -94,6 +105,7 @@ class StateMachine:
 
     def get_history(self, bookmark: str) -> list[Message]:
         """Return all state-transition messages for a task."""
+        bookmark = self._normalize_bookmark(bookmark)
         return [
             m
             for m in self.bus.for_task(bookmark)
