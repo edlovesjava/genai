@@ -122,7 +122,9 @@ class BaseAgent:
     def run(self, task_bookmark: str, max_turns: int = 20) -> AgentResult:
         """Main loop: build context -> call LLM -> execute tools -> repeat."""
         messages = self._build_context(task_bookmark)
+        n_initial = len(messages)
         tool_call_count = 0
+        compact_every = 4  # Compact every N turns.
 
         for turn in range(max_turns):
             if self.budget.exceeded:
@@ -143,6 +145,12 @@ class BaseAgent:
                     "%s: budget at %.0f%% (%d/%d tokens)",
                     self.name, self.budget.usage_ratio * 100,
                     self.budget.tokens_used, self.budget.max_tokens,
+                )
+
+            # Compact older messages periodically.
+            if turn > 0 and turn % compact_every == 0:
+                messages = self._compact_messages(
+                    messages, n_initial=n_initial, keep_recent=4,
                 )
 
             response = self._call_llm(messages)

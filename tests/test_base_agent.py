@@ -185,6 +185,43 @@ class TestBaseAgentRun:
         events = [m.event for m in msgs]
         assert "checkpoint" in events
 
+    def test_compacts_messages_after_threshold(self, setup):
+        """Verify message list is compacted during long-running loops."""
+        agent, mock_client, _ = setup
+        agent.register_tool(
+            name="noop",
+            description="Does nothing",
+            handler=lambda: "ok",
+            input_schema={"type": "object", "properties": {}},
+        )
+
+        call_count = 0
+        def mock_create(**kwargs):
+            nonlocal call_count
+            call_count += 1
+            if call_count < 10:
+                return _make_response(
+                    "",
+                    stop_reason="tool_use",
+                    tool_calls=[{"name": "noop", "input": {}}],
+                    input_tokens=50,
+                    output_tokens=50,
+                )
+            return _make_response("All done.", input_tokens=50, output_tokens=50)
+
+        mock_client.messages.create.side_effect = mock_create
+
+        result = agent.run("#test-task", max_turns=15)
+        assert result.status == "completed"
+
+        # Check that later LLM calls received compacted messages.
+        # The last call's messages arg should be shorter than 2*call_count + initial.
+        last_call_kwargs = mock_client.messages.create.call_args
+        last_messages = last_call_kwargs.kwargs.get("messages") or last_call_kwargs[1].get("messages")
+        # Without compaction: 1 initial + 9*2 turn msgs = 19.
+        # With compaction (keep_recent=4): should be much less than 19.
+        assert len(last_messages) < 19
+
 
 class TestBaseAgentPrompt:
     def test_load_system_prompt_from_file(self, setup, tmp_path):
