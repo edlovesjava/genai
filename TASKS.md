@@ -92,7 +92,7 @@
 ## Token Efficiency [#token-efficiency]
 
 - [x] Sliding window on message history
-- [ ] Truncate read_file tool output
+- [x] Truncate read_file tool output
 - [ ] Truncate linked docs in context manager
 - [ ] Remove duplicate tool descriptions from system prompt
 ## quick-task Improvements [#qt-improvements]
