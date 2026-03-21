@@ -23,6 +23,9 @@ class FileOps:
         resolved = self._resolve(path)
         if not resolved.exists():
             return f"Error: File not found: {path}"
+        if resolved.is_dir():
+            entries = sorted(p.name for p in resolved.iterdir())
+            return f"Error: '{path}' is a directory. Contents:\n" + "\n".join(entries)
         content = resolved.read_text()
         limit = max_chars if max_chars is not None else self.config.tools.max_read_chars
         if len(content) > limit:
