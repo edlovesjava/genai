@@ -18,12 +18,20 @@ class FileOps:
         self.config = config
         self.project_root = project_root or Path.cwd()
 
-    def read_file(self, path: str) -> str:
-        """Read and return file contents."""
+    def read_file(self, path: str, max_chars: int | None = None) -> str:
+        """Read and return file contents, truncating if over the limit."""
         resolved = self._resolve(path)
         if not resolved.exists():
             return f"Error: File not found: {path}"
-        return resolved.read_text()
+        content = resolved.read_text()
+        limit = max_chars if max_chars is not None else self.config.tools.max_read_chars
+        if len(content) > limit:
+            return (
+                f"{content[:limit]}\n\n"
+                f"[Truncated: showing {limit:,} of {len(content):,} characters. "
+                f"Use max_chars parameter to read more.]"
+            )
+        return content
 
     def write_file(self, path: str, content: str, approved: bool = False) -> str:
         """Write content to a file, checking human gates for protected paths."""

@@ -114,6 +114,31 @@ class TestFileOps:
         result = ops.write_file("genesis.toml", "approved content", approved=True)
         assert "Wrote" in result
 
+    def test_read_file_truncates_large_file(self, config: GenesisConfig, tmp_path: Path):
+        config.tools.max_read_chars = 50
+        ops = FileOps(config, project_root=tmp_path)
+        (tmp_path / "big.txt").write_text("x" * 200)
+        result = ops.read_file("big.txt")
+        assert len(result) < 200
+        assert "x" * 50 in result
+        assert "truncated" in result.lower()
+        assert "200" in result  # Shows total file size
+
+    def test_read_file_no_truncation_when_under_limit(self, config: GenesisConfig, tmp_path: Path):
+        config.tools.max_read_chars = 500
+        ops = FileOps(config, project_root=tmp_path)
+        (tmp_path / "small.txt").write_text("hello world")
+        result = ops.read_file("small.txt")
+        assert result == "hello world"
+
+    def test_read_file_max_chars_override(self, config: GenesisConfig, tmp_path: Path):
+        config.tools.max_read_chars = 50
+        ops = FileOps(config, project_root=tmp_path)
+        (tmp_path / "big.txt").write_text("x" * 200)
+        # Override with larger limit
+        result = ops.read_file("big.txt", max_chars=300)
+        assert result == "x" * 200  # No truncation since 200 < 300
+
 
 class TestTestRunner:
     def test_run_tests_returns_output(self, config: GenesisConfig, tmp_path: Path):
