@@ -98,13 +98,13 @@ class PlannerAgent(BaseAgent):
 
         self.register_tool(
             name="update_task_status",
-            description="Transition a task to a new status via the state machine.",
+            description="Transition a task to a new status via the state machine. Valid transitions: TODO→ASSIGNED→IN_PROGRESS→IN_REVIEW→DONE. Also: IN_PROGRESS→BLOCKED→IN_PROGRESS, IN_REVIEW→REJECTED→IN_PROGRESS.",
             handler=task_ops.update_task_status,
             input_schema={
                 "type": "object",
                 "properties": {
                     "bookmark": {"type": "string", "description": "Task bookmark (e.g. #my-task)."},
-                    "to_status": {"type": "string", "description": "Target status."},
+                    "to_status": {"type": "string", "description": "Target status. Must follow valid transitions: TODO→ASSIGNED→IN_PROGRESS→IN_REVIEW→DONE."},
                     "actor": {"type": "string", "description": "Who is making this transition."},
                     "reason": {"type": "string", "description": "Why this transition is happening."},
                 },

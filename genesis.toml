@@ -10,7 +10,7 @@ reasoning_model = "claude-opus-4-6"
 max_retries = 3
 
 [budget]
-planner_max_tokens = 200000
+planner_max_tokens = 300000
 builder_max_tokens = 200000
 daily_cap_tokens = 1000000
 warn_threshold = 0.8
