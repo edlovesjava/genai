@@ -86,6 +86,26 @@
     depends: #gen-runner
 - [x] End-to-end integration test (mocked LLM) [#gen-e2e-test]
     depends: #gen-runner
-- [ ] First real loop on quick-task improvement [#gen-first-loop]
+- [x] First real loop on quick-task improvement [#gen-first-loop]
     depends: #gen-e2e-test
     docs: spec/bootstrap-spec.md#the-first-project
+## quick-task Improvements [#qt-improvements]
+
+- [ ] Agent-oriented metadata fields [#qt-metadata]
+    docs: spec/bootstrap-spec.md#agent-oriented-metadata
+    - [ ] First-class fields: assignee, priority, created, updated [#qt-metadata-fields]
+    - [ ] CLI flags: --assignee, --priority [#qt-metadata-cli]
+    - [ ] Filter support: qt list --assignee @builder [#qt-metadata-filter]
+- [ ] Transition history / audit log [#qt-history]
+    docs: spec/bootstrap-spec.md#transition-history
+    - [ ] Append history metadata on status change [#qt-history-append]
+    - [ ] qt show --history display [#qt-history-show]
+    - [ ] JSON output includes history [#qt-history-json]
+- [ ] File locking for concurrent access [#qt-locking]
+    docs: spec/bootstrap-spec.md#file-locking
+    - [ ] Advisory lock on write [#qt-lock-acquire]
+    - [ ] Stale lock detection [#qt-lock-stale]
+- [ ] Filter/query enhancements [#qt-filters]
+    docs: spec/bootstrap-spec.md#filter-query
+    - [ ] Compound filter support [#qt-filter-compound]
+    - [ ] --has-metadata filter [#qt-filter-metadata]
