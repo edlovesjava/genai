@@ -281,6 +281,9 @@ class BaseAgent:
 
     def _execute_tool(self, name: str, input_data: dict) -> str:
         """Dispatch a tool call to the registered handler."""
+        if self.config.verbose.tool_trace:
+            args_summary = ", ".join(f"{k}={v!r}" for k, v in input_data.items())
+            logger.info("[%s] tool: %s(%s)", self.name, name, args_summary)
         handler = self.tool_map.get(name)
         if handler is None:
             return f"Error: Unknown tool '{name}'"
