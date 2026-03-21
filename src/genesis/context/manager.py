@@ -63,14 +63,23 @@ class ContextManager:
 
     def summarize_for_checkpoint(self, messages: list[dict]) -> str:
         """Compress a conversation into a progress summary."""
-        # Extract assistant messages as progress indicators.
         progress_lines = []
         for msg in messages:
-            if msg.get("role") == "assistant" and isinstance(msg.get("content"), str):
-                # Take first line of each assistant message as summary.
-                first_line = msg["content"].split("\n")[0].strip()
-                if first_line:
-                    progress_lines.append(f"- {first_line}")
+            content = msg.get("content")
+            if msg.get("role") == "assistant":
+                if isinstance(content, str):
+                    first_line = content.split("\n")[0].strip()
+                    if first_line:
+                        progress_lines.append(f"- {first_line}")
+                elif isinstance(content, list):
+                    for block in content:
+                        if hasattr(block, "text") and block.text:
+                            first_line = block.text.split("\n")[0].strip()
+                            progress_lines.append(f"- {first_line}")
+                        elif hasattr(block, "type") and block.type == "tool_use":
+                            args = ", ".join(f"{k}={v}" for k, v in
+                                             (block.input or {}).items())
+                            progress_lines.append(f"- Called {block.name}({args})")
         if not progress_lines:
             return "No progress recorded yet."
         return "Progress so far:\n" + "\n".join(progress_lines[-10:])

@@ -1,6 +1,7 @@
 """Tests for the context manager."""
 
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -102,3 +103,22 @@ class TestSummarizeForCheckpoint:
         # Should only have last 10.
         assert "Step 10" in summary
         assert "Step 19" in summary
+
+    def test_includes_tool_call_summaries(self, setup):
+        cm, _, _ = setup
+        messages = [
+            {"role": "assistant", "content": [
+                SimpleNamespace(type="tool_use", name="read_file", id="1",
+                                input={"path": "src/foo.py"}),
+            ]},
+            {"role": "user", "content": [
+                {"type": "tool_result", "tool_use_id": "1",
+                 "content": "def foo(): pass"},
+            ]},
+            {"role": "assistant", "content": [
+                SimpleNamespace(type="text", text="I've read the file and it has one function."),
+            ]},
+        ]
+        summary = cm.summarize_for_checkpoint(messages)
+        assert "read_file" in summary
+        assert "I've read the file" in summary
