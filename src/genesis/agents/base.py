@@ -196,6 +196,34 @@ class BaseAgent:
         """Build initial messages for the LLM. Override in subclasses."""
         return self.context_manager.build_planner_context(bookmark)
 
+    def _compact_messages(
+        self,
+        messages: list[dict],
+        n_initial: int = 0,
+        keep_recent: int = 4,
+    ) -> list[dict]:
+        """Summarize older turns, keeping initial context and recent turns.
+
+        Args:
+            messages: Full message list.
+            n_initial: Number of initial context messages to always preserve.
+            keep_recent: Number of recent turn pairs (assistant+tool_result) to keep.
+        """
+        # Count turn pairs (assistant + tool_result = 2 messages per turn).
+        turn_messages = messages[n_initial:]
+        n_turn_msgs = keep_recent * 2
+
+        if len(turn_messages) <= n_turn_msgs:
+            return messages  # Nothing to compact.
+
+        old_turns = turn_messages[:-n_turn_msgs]
+        recent_turns = turn_messages[-n_turn_msgs:]
+
+        summary = self.context_manager.summarize_for_checkpoint(old_turns)
+        summary_msg = {"role": "user", "content": f"## Conversation Summary\n{summary}"}
+
+        return messages[:n_initial] + [summary_msg] + recent_turns
+
     def _call_llm(
         self, messages: list[dict], max_retries: int = 0
     ) -> anthropic.types.Message | None:

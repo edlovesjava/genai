@@ -252,3 +252,61 @@ class TestToolExecution:
         agent.tool_map["greet"] = lambda name, greeting="hi": f"{greeting} {name}"
         result = agent._execute_tool("greet", {"name": "world", "greeting": "hello"})
         assert result == "hello world"
+
+
+class TestCompactMessages:
+    def test_compacts_old_turns_keeps_recent(self, setup):
+        agent, _, _ = setup
+        # 2 initial context messages + 6 turn messages (3 assistant + 3 tool_result)
+        messages = [
+            {"role": "user", "content": "## Current Task\nTest task"},
+            {"role": "user", "content": "## Design Documentation\nSome docs"},
+            # Turn 1
+            {"role": "assistant", "content": [
+                SimpleNamespace(type="text", text="Reading the file."),
+            ]},
+            {"role": "user", "content": [
+                {"type": "tool_result", "tool_use_id": "1", "content": "file contents"},
+            ]},
+            # Turn 2
+            {"role": "assistant", "content": [
+                SimpleNamespace(type="text", text="Updating the task."),
+            ]},
+            {"role": "user", "content": [
+                {"type": "tool_result", "tool_use_id": "2", "content": "task updated"},
+            ]},
+            # Turn 3
+            {"role": "assistant", "content": [
+                SimpleNamespace(type="text", text="Writing the plan."),
+            ]},
+            {"role": "user", "content": [
+                {"type": "tool_result", "tool_use_id": "3", "content": "plan written"},
+            ]},
+        ]
+        compacted = agent._compact_messages(messages, n_initial=2, keep_recent=2)
+        # Should have: 2 initial + 1 summary + 2 recent turn pairs (4 msgs) = 7
+        assert len(compacted) == 7
+        # Initial context preserved
+        assert compacted[0]["content"] == "## Current Task\nTest task"
+        assert compacted[1]["content"] == "## Design Documentation\nSome docs"
+        # Summary message inserted
+        assert "Progress so far" in compacted[2]["content"]
+        assert compacted[2]["role"] == "user"
+        # Recent turns preserved (turn 2 and 3)
+        assert compacted[3]["role"] == "assistant"
+        assert compacted[5]["role"] == "assistant"
+
+    def test_no_compaction_when_few_messages(self, setup):
+        agent, _, _ = setup
+        messages = [
+            {"role": "user", "content": "## Current Task\nTest task"},
+            {"role": "assistant", "content": [
+                SimpleNamespace(type="text", text="Done."),
+            ]},
+            {"role": "user", "content": [
+                {"type": "tool_result", "tool_use_id": "1", "content": "ok"},
+            ]},
+        ]
+        compacted = agent._compact_messages(messages, n_initial=1, keep_recent=2)
+        # Nothing to compact — only 1 turn pair, keep_recent=2
+        assert len(compacted) == len(messages)
