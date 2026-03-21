@@ -26,3 +26,6 @@ tools = ["read_file", "write_file", "list_tasks", "update_task_status", "git_cre
 [human_gates]
 protected_paths = [".github/", "genesis.toml", "pyproject.toml"]
 require_approval = ["merge", "delete", "push_main"]
+
+[tools]
+max_read_chars = 10000

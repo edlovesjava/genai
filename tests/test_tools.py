@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from genesis.bus.message_bus import MessageBus
-from genesis.config import GenesisConfig, HumanGatesConfig
+from genesis.config import GenesisConfig, HumanGatesConfig, load_config
 from genesis.tools.file_ops import FileOps, ProtectedPathError
 from genesis.tools.task_ops import TaskOps
 
@@ -132,3 +132,15 @@ class TestTestRunner:
         runner = TestRunner(config, project_root=tmp_path)
         result = runner.run_tests()
         assert "FAILED" in result
+
+
+class TestToolsConfig:
+    def test_default_max_read_chars(self):
+        config = GenesisConfig()
+        assert config.tools.max_read_chars == 10_000
+
+    def test_load_from_toml(self, tmp_path: Path):
+        toml_file = tmp_path / "genesis.toml"
+        toml_file.write_text('[tools]\nmax_read_chars = 5000\n')
+        config = load_config(toml_file)
+        assert config.tools.max_read_chars == 5000

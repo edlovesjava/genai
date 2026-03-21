@@ -39,6 +39,11 @@ class HumanGatesConfig:
 
 
 @dataclass
+class ToolsConfig:
+    max_read_chars: int = 10_000
+
+
+@dataclass
 class GenesisConfig:
     project_name: str = "genesis"
     tasks_file: str = "TASKS.md"
@@ -47,6 +52,7 @@ class GenesisConfig:
     budget: BudgetConfig = field(default_factory=BudgetConfig)
     agents: dict[str, AgentConfig] = field(default_factory=dict)
     human_gates: HumanGatesConfig = field(default_factory=HumanGatesConfig)
+    tools: ToolsConfig = field(default_factory=ToolsConfig)
 
     @property
     def tasks_path(self) -> Path:
@@ -78,6 +84,7 @@ def load_config(path: str | Path = "genesis.toml") -> GenesisConfig:
     budget_section = raw.get("budget", {})
     agents_section = raw.get("agents", {})
     gates_section = raw.get("human_gates", {})
+    tools_section = raw.get("tools", {})
 
     agents = {}
     for name, agent_raw in agents_section.items():
@@ -97,4 +104,5 @@ def load_config(path: str | Path = "genesis.toml") -> GenesisConfig:
             protected_paths=gates_section.get("protected_paths", []),
             require_approval=gates_section.get("require_approval", []),
         ),
+        tools=ToolsConfig(**{k: v for k, v in tools_section.items() if k in ToolsConfig.__dataclass_fields__}),
     )
