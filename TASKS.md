@@ -89,6 +89,12 @@
 - [x] First real loop on quick-task improvement [#gen-first-loop]
     depends: #gen-e2e-test
     docs: spec/bootstrap-spec.md#the-first-project
+## Token Efficiency [#token-efficiency]
+
+- [x] Sliding window on message history
+- [ ] Truncate read_file tool output
+- [ ] Truncate linked docs in context manager
+- [ ] Remove duplicate tool descriptions from system prompt
 ## quick-task Improvements [#qt-improvements]
 
 - [ ] Agent-oriented metadata fields [#qt-metadata]
