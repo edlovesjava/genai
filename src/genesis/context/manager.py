@@ -116,11 +116,17 @@ class ContextManager:
             docs = task.metadata.get("docs", "")
             if not docs:
                 return ""
+            limit = self.config.tools.max_read_chars
             parts = []
             for doc_path in docs.split(","):
                 resolved = Path(doc_path)
                 if resolved.exists():
                     content = resolved.read_text()
+                    if len(content) > limit:
+                        content = (
+                            f"{content[:limit]}\n\n"
+                            f"[Truncated: showing {limit:,} of {len(content):,} characters.]"
+                        )
                     parts.append(f"### {doc_path}\n{content}")
                 else:
                     parts.append(f"### {doc_path}\n(file not found)")

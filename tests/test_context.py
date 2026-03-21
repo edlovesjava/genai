@@ -61,6 +61,27 @@ class TestBuildPlannerContext:
         context = cm.build_planner_context("#active")
         assert len(context) >= 1  # At least the task info
 
+    def test_truncates_large_linked_docs(self, setup):
+        cm, _, tmp_path = setup
+        # Create a large doc file
+        doc_path = tmp_path / "docs" / "design.md"
+        doc_path.parent.mkdir(parents=True, exist_ok=True)
+        doc_path.write_text("x" * 20_000)
+        # Create task file pointing to it
+        task_file = tmp_path / "TASKS.md"
+        task_file.write_text(
+            f"## Tasks [#tasks]\n\n"
+            f"- [ ] My task [#my-task]\n"
+            f"    docs: {doc_path}\n"
+        )
+        cm.config.tasks_file = str(task_file)
+        cm.config.tools.max_read_chars = 500
+        context = cm.build_planner_context("#my-task")
+        combined = " ".join(m["content"] for m in context)
+        assert "Design Documentation" in combined
+        assert "truncated" in combined.lower()
+        assert len(combined) < 20_000
+
 
 class TestBuildBuilderContext:
     def test_includes_task_info(self, setup):
