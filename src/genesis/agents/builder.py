@@ -62,7 +62,10 @@ class BuilderAgent(BaseAgent):
             handler=file_ops.read_file,
             input_schema={
                 "type": "object",
-                "properties": {"path": {"type": "string", "description": "File path to read."}},
+                "properties": {
+                    "path": {"type": "string", "description": "File path to read."},
+                    "max_chars": {"type": "integer", "description": "Max characters to return. Defaults to config value (10000)."},
+                },
                 "required": ["path"],
             },
         )
