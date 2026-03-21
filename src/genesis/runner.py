@@ -18,6 +18,8 @@ from genesis.config import GenesisConfig, load_config
 from genesis.context.manager import ContextManager
 from genesis.state.machine import StateMachine
 
+from quick_task.api import get_task, load_file, TaskNotFoundError
+
 logger = logging.getLogger(__name__)
 
 
@@ -50,6 +52,17 @@ class GenesisRunner:
         self.client = client
         self._gate_handler = gate_handler
 
+    def _validate_bookmark(self, task_bookmark: str) -> None:
+        """Validate that a task bookmark exists in TASKS.md. Raises early."""
+        try:
+            task_file = load_file(str(self.config.tasks_path))
+            get_task(task_file, task_bookmark)
+        except TaskNotFoundError:
+            raise TaskNotFoundError(
+                f"Task '{task_bookmark}' not found in {self.config.tasks_file}. "
+                f"Check your bookmark spelling."
+            )
+
     def run_planner(self, task_bookmark: str) -> str:
         """Run the planner phase for a task.
 
@@ -60,6 +73,8 @@ class GenesisRunner:
 
         Returns the planner's summary.
         """
+        self._validate_bookmark(task_bookmark)
+
         # Step 1: transition to ASSIGNED.
         self.state_machine.transition(
             task_bookmark, "ASSIGNED", "runner", "Starting planner phase."
@@ -101,6 +116,8 @@ class GenesisRunner:
 
         Returns the builder's summary.
         """
+        self._validate_bookmark(task_bookmark)
+
         # Verify task is in the right state.
         current = self.state_machine.get_status(task_bookmark)
         if current != "IN_PROGRESS":

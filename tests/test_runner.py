@@ -11,6 +11,7 @@ from genesis.bus.message_bus import MessageBus
 from genesis.config import GenesisConfig
 from genesis.runner import GenesisRunner, HumanGateRequired
 from genesis.state.machine import InvalidTransitionError
+from quick_task.api import TaskNotFoundError
 
 SAMPLE_TASKS = """\
 ## Iteration 1 [#iter-1]
@@ -325,3 +326,29 @@ class TestEndToEnd:
 
         # Task should be ASSIGNED (planner didn't finish).
         assert runner.state_machine.get_status("#fix-bug") == "ASSIGNED"
+
+
+# --- Bookmark Validation ---
+
+
+class TestBookmarkValidation:
+    def test_planner_rejects_unknown_bookmark(self, env):
+        config, client, tmp_path = env
+        runner = GenesisRunner(
+            config=config, client=client, project_root=tmp_path,
+            gate_handler=lambda gt, bk, d: True,
+        )
+        with pytest.raises(TaskNotFoundError, match="not found"):
+            runner.run_planner("#nonexistent")
+        # No LLM calls should have been made.
+        client.messages.create.assert_not_called()
+
+    def test_builder_rejects_unknown_bookmark(self, env):
+        config, client, tmp_path = env
+        runner = GenesisRunner(
+            config=config, client=client, project_root=tmp_path,
+            gate_handler=lambda gt, bk, d: True,
+        )
+        with pytest.raises(TaskNotFoundError, match="not found"):
+            runner.run_builder("#nonexistent")
+        client.messages.create.assert_not_called()
