@@ -10,9 +10,8 @@ from genesis.agents.base import BaseAgent
 from genesis.bus.message_bus import MessageBus
 from genesis.config import GenesisConfig
 from genesis.context.manager import ContextManager
+from genesis.prompts import load_prompt
 from genesis.tools import FileOps, TaskOps
-
-PROMPTS_DIR = Path(__file__).resolve().parent.parent / "prompts"
 
 
 class PlannerAgent(BaseAgent):
@@ -38,9 +37,8 @@ class PlannerAgent(BaseAgent):
         )
         self._project_root = project_root or Path.cwd()
 
-        # Load system prompt.
-        prompt_path = PROMPTS_DIR / "planner_system.md"
-        self.load_system_prompt(prompt_path)
+        # Load system prompt via importlib.resources (works for all install types).
+        self.set_system_prompt(load_prompt("planner_system.md"))
 
         # Register planner tools.
         self._register_planner_tools(config, bus)
