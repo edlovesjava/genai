@@ -12,7 +12,7 @@ from genesis.config import GenesisConfig
 from genesis.context.manager import ContextManager
 from genesis.tools import FileOps, GitOps, TaskOps, TestRunner
 
-PROMPTS_DIR = Path(__file__).resolve().parent.parent.parent.parent / "prompts"
+PROMPTS_DIR = Path(__file__).resolve().parent.parent / "prompts"
 
 
 class BuilderAgent(BaseAgent):
@@ -95,22 +95,6 @@ class BuilderAgent(BaseAgent):
                     "status": {"type": "string", "description": "Filter by status."},
                     "flat": {"type": "boolean", "description": "Flatten nested tasks."},
                 },
-            },
-        )
-
-        self.register_tool(
-            name="update_task_status",
-            description="Transition a task to a new status via the state machine.",
-            handler=task_ops.update_task_status,
-            input_schema={
-                "type": "object",
-                "properties": {
-                    "bookmark": {"type": "string", "description": "Task bookmark."},
-                    "to_status": {"type": "string", "description": "Target status."},
-                    "actor": {"type": "string", "description": "Who is making this transition."},
-                    "reason": {"type": "string", "description": "Why."},
-                },
-                "required": ["bookmark", "to_status", "actor", "reason"],
             },
         )
 

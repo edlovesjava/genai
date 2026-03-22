@@ -65,7 +65,7 @@ class TestPlannerAgent:
         assert "read_file" in agent.tool_map
         assert "write_file" in agent.tool_map
         assert "list_tasks" in agent.tool_map
-        assert "update_task_status" in agent.tool_map
+        assert "update_task_status" not in agent.tool_map
         assert "add_task" in agent.tool_map
 
     def test_does_not_have_builder_tools(self, env):
@@ -146,7 +146,7 @@ class TestBuilderAgent:
         assert "read_file" in agent.tool_map
         assert "write_file" in agent.tool_map
         assert "list_tasks" in agent.tool_map
-        assert "update_task_status" in agent.tool_map
+        assert "update_task_status" not in agent.tool_map
         assert "git_create_branch" in agent.tool_map
         assert "git_commit" in agent.tool_map
         assert "git_open_pr" in agent.tool_map
