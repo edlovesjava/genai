@@ -24,7 +24,7 @@ pytest -k "planner"
   - `__main__.py` — CLI: `python -m genesis plan|build|run|status`
   - `config.py` — Loads `genesis.toml`, provides `GenesisConfig` dataclass
   - `agents/base.py` — BaseAgent with LLM loop, tool dispatch, budget tracking
-  - `agents/planner.py` — PlannerAgent (tools: read_file, write_file, list_tasks, update_task_status, add_task)
+  - `agents/planner.py` — PlannerAgent (tools: read_file, write_file, list_tasks, add_task)
   - `agents/builder.py` — BuilderAgent (tools: + git_create_branch, git_commit, git_open_pr, run_tests)
   - `bus/message_bus.py` — File-based JSON message bus (.genesis/messages/)
   - `state/machine.py` — Task state machine (TODO→ASSIGNED→IN_PROGRESS→IN_REVIEW→DONE)
