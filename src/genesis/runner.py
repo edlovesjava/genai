@@ -14,7 +14,7 @@ import anthropic
 from genesis.agents.builder import BuilderAgent
 from genesis.agents.planner import PlannerAgent
 from genesis.bus.message_bus import Message, MessageBus
-from genesis.config import GenesisConfig, load_config
+from genesis.config import AgentConfig, GenesisConfig, load_config
 from genesis.context.manager import ContextManager
 from genesis.state.machine import StateMachine
 
@@ -89,7 +89,8 @@ class GenesisRunner:
             max_tokens_budget=self.config.budget.planner_max_tokens,
             project_root=self.project_root,
         )
-        result = planner.run(task_bookmark)
+        planner_max_turns = self.config.agents.get("planner", AgentConfig()).max_turns
+        result = planner.run(task_bookmark, max_turns=planner_max_turns)
 
         if result.status != "completed":
             logger.warning(
@@ -132,7 +133,8 @@ class GenesisRunner:
             max_tokens_budget=self.config.budget.builder_max_tokens,
             project_root=self.project_root,
         )
-        result = builder.run(task_bookmark)
+        builder_max_turns = self.config.agents.get("builder", AgentConfig()).max_turns
+        result = builder.run(task_bookmark, max_turns=builder_max_turns)
 
         if result.status != "completed":
             logger.warning(

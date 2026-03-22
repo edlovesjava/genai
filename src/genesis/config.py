@@ -35,6 +35,7 @@ class VerboseConfig:
 class AgentConfig:
     system_prompt: str = ""
     tools: list[str] = field(default_factory=list)
+    max_turns: int = 20
 
 
 @dataclass
@@ -98,6 +99,7 @@ def load_config(path: str | Path = "genesis.toml") -> GenesisConfig:
         agents[name] = AgentConfig(
             system_prompt=agent_raw.get("system_prompt", ""),
             tools=agent_raw.get("tools", []),
+            max_turns=agent_raw.get("max_turns", 20),
         )
 
     return GenesisConfig(
