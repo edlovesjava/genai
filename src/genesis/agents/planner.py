@@ -10,9 +10,8 @@ from genesis.agents.base import BaseAgent
 from genesis.bus.message_bus import MessageBus
 from genesis.config import GenesisConfig
 from genesis.context.manager import ContextManager
+from genesis.prompts import load_prompt
 from genesis.tools import FileOps, TaskOps
-
-PROMPTS_DIR = Path(__file__).resolve().parent.parent.parent.parent / "prompts"
 
 
 class PlannerAgent(BaseAgent):
@@ -38,9 +37,8 @@ class PlannerAgent(BaseAgent):
         )
         self._project_root = project_root or Path.cwd()
 
-        # Load system prompt.
-        prompt_path = PROMPTS_DIR / "planner_system.md"
-        self.load_system_prompt(prompt_path)
+        # Load system prompt via importlib.resources (works for all install types).
+        self.set_system_prompt(load_prompt("planner_system.md"))
 
         # Register planner tools.
         self._register_planner_tools(config, bus)
@@ -93,22 +91,6 @@ class PlannerAgent(BaseAgent):
                     "status": {"type": "string", "description": "Filter by status (todo, in_progress, done, blocked)."},
                     "flat": {"type": "boolean", "description": "Flatten nested tasks."},
                 },
-            },
-        )
-
-        self.register_tool(
-            name="update_task_status",
-            description="Transition a task to a new status via the state machine. Valid transitions: TODO→ASSIGNED→IN_PROGRESS→IN_REVIEW→DONE. Also: IN_PROGRESS→BLOCKED→IN_PROGRESS, IN_REVIEW→REJECTED→IN_PROGRESS.",
-            handler=task_ops.update_task_status,
-            input_schema={
-                "type": "object",
-                "properties": {
-                    "bookmark": {"type": "string", "description": "Task bookmark (e.g. #my-task)."},
-                    "to_status": {"type": "string", "description": "Target status. Must follow valid transitions: TODO→ASSIGNED→IN_PROGRESS→IN_REVIEW→DONE."},
-                    "actor": {"type": "string", "description": "Who is making this transition."},
-                    "reason": {"type": "string", "description": "Why this transition is happening."},
-                },
-                "required": ["bookmark", "to_status", "actor", "reason"],
             },
         )
 

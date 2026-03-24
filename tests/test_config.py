@@ -54,6 +54,16 @@ require_approval = ["merge"]
         assert config.llm.provider == "anthropic"  # default
         assert config.agents == {}
 
+    def test_verbose_config_from_file(self, tmp_path: Path):
+        toml = tmp_path / "genesis.toml"
+        toml.write_text("[verbose]\ntool_trace = true\n")
+        config = load_config(toml)
+        assert config.verbose.tool_trace is True
+
+    def test_verbose_config_defaults_to_off(self, tmp_path: Path):
+        config = load_config(tmp_path / "missing.toml")
+        assert config.verbose.tool_trace is False
+
     def test_path_properties(self):
         config = GenesisConfig(tasks_file="TASKS.md", genesis_dir=".genesis")
         assert config.tasks_path == Path("TASKS.md")

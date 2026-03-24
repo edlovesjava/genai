@@ -27,9 +27,15 @@ class BudgetConfig:
 
 
 @dataclass
+class VerboseConfig:
+    tool_trace: bool = False
+
+
+@dataclass
 class AgentConfig:
     system_prompt: str = ""
     tools: list[str] = field(default_factory=list)
+    max_turns: int = 20
 
 
 @dataclass
@@ -50,6 +56,7 @@ class GenesisConfig:
     genesis_dir: str = ".genesis"
     llm: LLMConfig = field(default_factory=LLMConfig)
     budget: BudgetConfig = field(default_factory=BudgetConfig)
+    verbose: VerboseConfig = field(default_factory=VerboseConfig)
     agents: dict[str, AgentConfig] = field(default_factory=dict)
     human_gates: HumanGatesConfig = field(default_factory=HumanGatesConfig)
     tools: ToolsConfig = field(default_factory=ToolsConfig)
@@ -83,6 +90,7 @@ def load_config(path: str | Path = "genesis.toml") -> GenesisConfig:
     llm_section = raw.get("llm", {})
     budget_section = raw.get("budget", {})
     agents_section = raw.get("agents", {})
+    verbose_section = raw.get("verbose", {})
     gates_section = raw.get("human_gates", {})
     tools_section = raw.get("tools", {})
 
@@ -91,6 +99,7 @@ def load_config(path: str | Path = "genesis.toml") -> GenesisConfig:
         agents[name] = AgentConfig(
             system_prompt=agent_raw.get("system_prompt", ""),
             tools=agent_raw.get("tools", []),
+            max_turns=agent_raw.get("max_turns", 20),
         )
 
     return GenesisConfig(
@@ -99,6 +108,7 @@ def load_config(path: str | Path = "genesis.toml") -> GenesisConfig:
         genesis_dir=genesis_section.get("genesis_dir", ".genesis"),
         llm=LLMConfig(**{k: v for k, v in llm_section.items() if k in LLMConfig.__dataclass_fields__}),
         budget=BudgetConfig(**{k: v for k, v in budget_section.items() if k in BudgetConfig.__dataclass_fields__}),
+        verbose=VerboseConfig(**{k: v for k, v in verbose_section.items() if k in VerboseConfig.__dataclass_fields__}),
         agents=agents,
         human_gates=HumanGatesConfig(
             protected_paths=gates_section.get("protected_paths", []),

@@ -166,8 +166,25 @@ class BaseAgent:
             # Append assistant response.
             messages.append({"role": "assistant", "content": response.content})
 
-            # Check if we're done (no tool use).
-            if response.stop_reason == "end_turn":
+            # Process any tool_use blocks in the response, regardless of
+            # stop_reason.  When stop_reason is "max_tokens" the response may
+            # still contain completed tool_use blocks that need tool_results;
+            # omitting them corrupts the conversation and causes a 400 error.
+            tool_results = []
+            for block in response.content:
+                if block.type == "tool_use":
+                    tool_call_count += 1
+                    result = self._execute_tool(block.name, block.input)
+                    tool_results.append({
+                        "type": "tool_result",
+                        "tool_use_id": block.id,
+                        "content": result,
+                    })
+            if tool_results:
+                messages.append({"role": "user", "content": tool_results})
+
+            # If no tool calls were made, the agent is done.
+            if not tool_results:
                 summary = self._extract_text(response.content)
                 self._checkpoint(task_bookmark, summary)
                 return AgentResult(
@@ -177,20 +194,6 @@ class BaseAgent:
                     tokens_used=self.budget.tokens_used,
                     tool_calls=tool_call_count,
                 )
-
-            # Process tool calls.
-            if response.stop_reason == "tool_use":
-                tool_results = []
-                for block in response.content:
-                    if block.type == "tool_use":
-                        tool_call_count += 1
-                        result = self._execute_tool(block.name, block.input)
-                        tool_results.append({
-                            "type": "tool_result",
-                            "tool_use_id": block.id,
-                            "content": result,
-                        })
-                messages.append({"role": "user", "content": tool_results})
 
         return AgentResult(
             bookmark=task_bookmark,
@@ -278,6 +281,9 @@ class BaseAgent:
 
     def _execute_tool(self, name: str, input_data: dict) -> str:
         """Dispatch a tool call to the registered handler."""
+        if self.config.verbose.tool_trace:
+            args_summary = ", ".join(f"{k}={v!r}" for k, v in input_data.items())
+            logger.info("[%s] tool: %s(%s)", self.name, name, args_summary)
         handler = self.tool_map.get(name)
         if handler is None:
             return f"Error: Unknown tool '{name}'"

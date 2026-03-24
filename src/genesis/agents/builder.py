@@ -10,9 +10,8 @@ from genesis.agents.base import BaseAgent
 from genesis.bus.message_bus import MessageBus
 from genesis.config import GenesisConfig
 from genesis.context.manager import ContextManager
+from genesis.prompts import load_prompt
 from genesis.tools import FileOps, GitOps, TaskOps, TestRunner
-
-PROMPTS_DIR = Path(__file__).resolve().parent.parent.parent.parent / "prompts"
 
 
 class BuilderAgent(BaseAgent):
@@ -38,9 +37,8 @@ class BuilderAgent(BaseAgent):
         )
         self._project_root = project_root or Path.cwd()
 
-        # Load system prompt.
-        prompt_path = PROMPTS_DIR / "builder_system.md"
-        self.load_system_prompt(prompt_path)
+        # Load system prompt via importlib.resources (works for all install types).
+        self.set_system_prompt(load_prompt("builder_system.md"))
 
         # Register builder tools.
         self._register_builder_tools(config, bus)
@@ -95,22 +93,6 @@ class BuilderAgent(BaseAgent):
                     "status": {"type": "string", "description": "Filter by status."},
                     "flat": {"type": "boolean", "description": "Flatten nested tasks."},
                 },
-            },
-        )
-
-        self.register_tool(
-            name="update_task_status",
-            description="Transition a task to a new status via the state machine.",
-            handler=task_ops.update_task_status,
-            input_schema={
-                "type": "object",
-                "properties": {
-                    "bookmark": {"type": "string", "description": "Task bookmark."},
-                    "to_status": {"type": "string", "description": "Target status."},
-                    "actor": {"type": "string", "description": "Who is making this transition."},
-                    "reason": {"type": "string", "description": "Why."},
-                },
-                "required": ["bookmark", "to_status", "actor", "reason"],
             },
         )
 

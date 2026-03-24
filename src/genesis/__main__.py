@@ -64,6 +64,8 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     config = load_config(args.config)
+    if args.verbose:
+        config.verbose.tool_trace = True
     gate_handler = (lambda gt, bk, d: True) if args.auto_approve else _prompt_gate
     runner = GenesisRunner(config=config, gate_handler=gate_handler)
 

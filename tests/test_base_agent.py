@@ -291,6 +291,30 @@ class TestToolExecution:
         assert result == "hello world"
 
 
+class TestVerboseToolTrace:
+    def test_tool_trace_logs_when_enabled(self, setup, caplog):
+        agent, _, _ = setup
+        agent.config.verbose.tool_trace = True
+        agent.tool_map["greet"] = lambda name: f"hello {name}"
+
+        import logging
+        with caplog.at_level(logging.INFO, logger="genesis.agents.base"):
+            agent._execute_tool("greet", {"name": "world"})
+
+        assert any("[base] tool: greet(name='world')" in r.message for r in caplog.records)
+
+    def test_tool_trace_silent_when_disabled(self, setup, caplog):
+        agent, _, _ = setup
+        agent.config.verbose.tool_trace = False
+        agent.tool_map["greet"] = lambda name: f"hello {name}"
+
+        import logging
+        with caplog.at_level(logging.INFO, logger="genesis.agents.base"):
+            agent._execute_tool("greet", {"name": "world"})
+
+        assert not any("tool: greet" in r.message for r in caplog.records)
+
+
 class TestCompactMessages:
     def test_compacts_old_turns_keeps_recent(self, setup):
         agent, _, _ = setup
