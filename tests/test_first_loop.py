@@ -289,13 +289,14 @@ class TestFirstLoop:
         assert "test_task_assignee" in tests.read_text()
 
         # --- Verify state transitions ---
-        assert runner.state_machine.get_status("#qt-metadata") == "IN_REVIEW"
+        assert runner.state_machine.get_status("#qt-metadata") == "DONE"
         history = runner.state_machine.get_history("#qt-metadata")
         transitions = [(h.payload["from"], h.payload["to"]) for h in history]
         assert transitions == [
             ("TODO", "ASSIGNED"),
             ("ASSIGNED", "IN_PROGRESS"),
             ("IN_PROGRESS", "IN_REVIEW"),
+            ("IN_REVIEW", "DONE"),
         ]
 
         # --- Verify bus activity ---

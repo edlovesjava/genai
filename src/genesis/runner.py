@@ -68,7 +68,7 @@ class GenesisRunner:
 
         1. TODO → ASSIGNED
         2. Run PlannerAgent
-        3. ASSIGNED → IN_PROGRESS
+        3. ASSIGNED → IN_PROGRESS (or BLOCKED on budget exceeded)
         4. Trigger design review gate
 
         Returns the planner's summary.
@@ -92,6 +92,18 @@ class GenesisRunner:
         planner_max_turns = self.config.agents.get("planner", AgentConfig()).max_turns
         result = planner.run(task_bookmark, max_turns=planner_max_turns)
 
+        if result.status == "budget_exceeded":
+            # Two-hop: ASSIGNED → IN_PROGRESS → BLOCKED (no direct ASSIGNED→BLOCKED).
+            self.state_machine.transition(
+                task_bookmark, "IN_PROGRESS", "runner",
+                "Planner budget exceeded — moving to IN_PROGRESS before blocking."
+            )
+            self.state_machine.transition(
+                task_bookmark, "BLOCKED", "runner",
+                f"Planner budget exceeded: {result.summary}"
+            )
+            return result.summary
+
         if result.status != "completed":
             logger.warning(
                 "Planner did not complete for %s: %s", task_bookmark, result.summary
@@ -114,6 +126,7 @@ class GenesisRunner:
         1. Run BuilderAgent (task should already be IN_PROGRESS)
         2. IN_PROGRESS → IN_REVIEW
         3. Trigger PR review gate
+        4. IN_REVIEW → DONE on gate approval; mark subtasks done
 
         Returns the builder's summary.
         """
@@ -136,6 +149,13 @@ class GenesisRunner:
         builder_max_turns = self.config.agents.get("builder", AgentConfig()).max_turns
         result = builder.run(task_bookmark, max_turns=builder_max_turns)
 
+        if result.status == "budget_exceeded":
+            self.state_machine.transition(
+                task_bookmark, "BLOCKED", "runner",
+                f"Builder budget exceeded: {result.summary}"
+            )
+            return result.summary
+
         if result.status != "completed":
             logger.warning(
                 "Builder did not complete for %s: %s", task_bookmark, result.summary
@@ -149,6 +169,12 @@ class GenesisRunner:
 
         # Human PR review gate.
         self._notify_gate("pr_review", task_bookmark, result.summary)
+
+        # Gate approved (no exception raised) — mark subtasks then parent DONE.
+        self._mark_subtasks_done(task_bookmark)
+        self.state_machine.transition(
+            task_bookmark, "DONE", "runner", "PR review approved."
+        )
 
         return result.summary
 
@@ -196,3 +222,33 @@ class GenesisRunner:
         else:
             # No handler — raise so caller can handle manually.
             raise HumanGateRequired(gate_type, bookmark, detail)
+
+    def _mark_subtasks_done(self, task_bookmark: str) -> None:
+        """Mark all subtasks of a task as DONE if not already done."""
+        try:
+            task_file = load_file(str(self.config.tasks_path))
+            task = get_task(task_file, task_bookmark)
+        except TaskNotFoundError:
+            return
+
+        for subtask in getattr(task, "children", []):
+            bm = getattr(subtask, "bookmark", None)
+            if not bm:
+                continue
+            try:
+                current = self.state_machine.get_status(bm)
+                if current == "DONE":
+                    continue
+                # Promote subtask to IN_REVIEW then DONE via valid transitions.
+                if self.state_machine.can_transition(bm, "IN_REVIEW"):
+                    self.state_machine.transition(
+                        bm, "IN_REVIEW", "runner",
+                        "Parent task completed — marking subtask in review."
+                    )
+                if self.state_machine.can_transition(bm, "DONE"):
+                    self.state_machine.transition(
+                        bm, "DONE", "runner",
+                        "Parent task approved — marking subtask done."
+                    )
+            except Exception as exc:
+                logger.warning("Could not mark subtask %s done: %s", bm, exc)

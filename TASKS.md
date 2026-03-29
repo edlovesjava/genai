@@ -1,5 +1,13 @@
 ## Genesis Kernel [#genesis]
 
+- [x] Runner never transitions tasks to DONE [#gen-runner-done-bug]
+    updated: 2026-03-29T02:34:17Z
+    - [x] Add IN_REVIEW → DONE transition after human gate approval [#gen-done-transition]
+        updated: 2026-03-29T02:34:17Z
+    - [x] Mark task BLOCKED on budget_exceeded instead of silent warning [#gen-budget-blocked]
+        updated: 2026-03-29T02:34:17Z
+    - [x] Runner should mark subtasks done as builder completes them [#gen-subtask-tracking]
+        updated: 2026-03-29T02:34:17Z
 ## Iteration 0: Foundation [#iter-0]
 
 - [x] Build quick-task Python API module [#gen-build-qt-api]
@@ -97,11 +105,15 @@
 - [ ] Remove duplicate tool descriptions from system prompt
 ## quick-task Improvements [#qt-improvements]
 
-- [ ] Agent-oriented metadata fields [#qt-metadata]
+- [x] Agent-oriented metadata fields [#qt-metadata]
     docs: spec/bootstrap-spec.md#agent-oriented-metadata
-    - [ ] First-class fields: assignee, priority, created, updated [#qt-metadata-fields]
-    - [ ] CLI flags: --assignee, --priority [#qt-metadata-cli]
-    - [ ] Filter support: qt list --assignee @builder [#qt-metadata-filter]
+    updated: 2026-03-29T02:08:20Z
+    - [x] First-class fields: assignee, priority, created, updated [#qt-metadata-fields]
+        updated: 2026-03-29T02:08:11Z
+    - [x] CLI flags: --assignee, --priority [#qt-metadata-cli]
+        updated: 2026-03-29T02:08:11Z
+    - [x] Filter support: qt list --assignee @builder [#qt-metadata-filter]
+        updated: 2026-03-29T02:08:11Z
 - [ ] Transition history / audit log [#qt-history]
     docs: spec/bootstrap-spec.md#transition-history
     - [ ] Append history metadata on status change [#qt-history-append]

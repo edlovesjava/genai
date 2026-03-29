@@ -246,7 +246,7 @@ class BaseAgent:
             try:
                 kwargs: dict[str, Any] = {
                     "model": self.config.llm.default_model,
-                    "max_tokens": 4096,
+                    "max_tokens": 16384,
                     "system": self._system_prompt,
                     "messages": messages,
                 }
