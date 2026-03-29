@@ -1,0 +1,29 @@
+{
+  "name": "Genesis (Claude Sandbox)",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "genai",
+  "workspaceFolder": "/home/dev/workspace",
+
+  "remoteUser": "dev",
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "python.defaultInterpreterPath": "/usr/bin/python3"
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.debugpy",
+        "charliermarsh.ruff",
+        "tamasfe.even-better-toml"
+      ]
+    }
+  },
+
+  "features": {
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
+  },
+
+  "postCreateCommand": "git config --global user.name 'edlovesjava' && git config --global user.email 'edlovesjava@yahoo.com' && git config --global core.autocrlf input && git config --global --add safe.directory /home/dev/workspace && pip install -e '.[dev]' && pip install -e ../quick-task 2>/dev/null || true"
+}

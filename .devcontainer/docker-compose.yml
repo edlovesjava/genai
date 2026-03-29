@@ -1,0 +1,35 @@
+services:
+  genai:
+    build:
+      context: ../../claude-sandbox
+      dockerfile: Dockerfile
+    container_name: genai-dev
+    hostname: genai-dev
+    stdin_open: true
+    tty: true
+
+    env_file:
+      - ../../claude-sandbox/.env
+
+    environment:
+      - TERM=xterm-256color
+
+    volumes:
+      # This project as the workspace
+      - ..:/home/dev/workspace
+      # Quick-task dependency (sibling project)
+      - ../../quick-task:/home/dev/quick-task
+      # SSH keys
+      - ${HOME}/.ssh:/home/dev/.ssh:ro
+      # Other projects accessible if needed
+      - ${HOME}/Projects:/home/dev/projects
+      # Persistent caches
+      - genai-cache:/home/dev/.cache
+      - genai-local:/home/dev/.local
+
+    group_add:
+      - dialout
+
+volumes:
+  genai-cache:
+  genai-local:
