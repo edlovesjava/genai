@@ -12,6 +12,12 @@ requires-python = ">=3.11"
 dependencies = []
 
 [project.optional-dependencies]
+# The orchestration layer can run on real Genesis primitives (message bus,
+# state machine). This extra is optional so genspec installs and tests on its
+# own; orchestrate_genesis imports genesis lazily.
+genesis = [
+    "genesis",
+]
 dev = [
     "pytest>=8.0",
 ]

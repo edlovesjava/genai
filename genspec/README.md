@@ -66,18 +66,22 @@ genspec/
 ├── specs/
 │   ├── format.spec.md           # the spec format, written in its own format (self-hosting)
 │   ├── state-machine.spec.md     # a model of existing Genesis code
-│   └── generate.spec.md         # a model of the generator (self-describing)
+│   ├── generate.spec.md         # a model of the generator (self-describing)
+│   └── orchestrate.spec.md      # a model of the orchestration layer (self-describing)
 ├── src/genspec/
 │   ├── model.py                 # the high-fidelity model: typed dataclasses
 │   ├── parser.py                # .spec.md  ──▶  Specification
 │   ├── validator.py             # Specification ──▶ diagnostics (spec as source of validation)
-│   └── generate/                # the "compiler" half — spec ──▶ disposable code
-│       ├── agents.py            # independent TestAuthor / Coder (Protocols)
-│       ├── conformance.py       # run generated tests against generated code
-│       └── loop.py              # the iterative TDD loop + fault classification + gates
+│   ├── generate/                # the "compiler" half — spec ──▶ disposable code
+│   │   ├── agents.py            # independent TestAuthor / Coder (Protocols)
+│   │   ├── conformance.py       # run generated tests against generated code
+│   │   └── loop.py              # the iterative TDD loop + fault classification + gates
+│   ├── orchestrate.py           # SpecRunner — drives a spec through its lifecycle
+│   └── orchestrate_genesis.py   # wires SpecRunner onto real Genesis primitives (lazy)
 └── tests/
     ├── test_genspec.py
-    └── test_generate.py
+    ├── test_generate.py
+    └── test_orchestrate.py
 ```
 
 ## Use
@@ -132,9 +136,38 @@ the paradigm reconnects to Genesis's own primitives: **human gates** and
 **dependency-ordered decomposition** (a spec library is generated in
 `depends`-topological order).
 
+## Orchestration — the lifecycle layer
+
+`Generator` builds one spec once. `SpecRunner` (`orchestrate.py`) is the outer
+loop that drives a spec through its SDLC over time, **reusing the Genesis kernel's
+primitives** instead of forking them — the file message bus, the six-state task
+machine, and the human-gate pattern. The mechanical disposition maps onto the
+state machine:
+
+```
+TODO ─ASSIGNED─▶ IN_PROGRESS ─┬─ VALIDATED/RECONCILED ─▶ IN_REVIEW ─┬─ accept ─▶ DONE
+                              │                                     └─ decline ▶ REJECTED
+                              └─ INVALID / spec fault ─────────────▶ BLOCKED (escalate)
+```
+
+The "is the spec correct?" question becomes the `IN_REVIEW`→`DONE` human gate; a
+spec fault becomes a `BLOCKED` escalation; a spec library runs in
+`depends`-topological order. On acceptance the generated code and tests are
+**committed** to a tracked output dir, so the repo always holds runnable code
+beside its specs.
+
+The core (`orchestrate.py`) imports nothing from Genesis — it depends only on two
+narrow Protocols (`Lifecycle`, `Emit`) that the real `StateMachine` and
+`MessageBus` satisfy. The single coupling point is `orchestrate_genesis.py`, which
+imports Genesis lazily (`pip install -e ".[genesis]"`) and fails with a clear
+message if it's absent. So genspec installs and tests standalone, yet runs on real
+kernel primitives when Genesis is present.
+
 ## Status
 
-The durable half (format, model, parser, validator) and the compiler half
-(independent-agent TDD generation with gates) are in place and tested. The agents
-themselves are Protocols: a real Claude-backed `TestAuthor`/`Coder` plugs into the
-same loop the tests drive with deterministic doubles.
+The durable half (format, model, parser, validator), the compiler half
+(independent-agent TDD generation with gates), and the orchestration layer
+(SpecRunner on Genesis primitives) are in place and tested (35 tests). The
+remaining seam is the live LLM: `TestAuthor`/`Coder` are Protocols, so a real
+Claude-backed pair plugs into the same loop the tests drive with deterministic
+doubles.
