@@ -29,10 +29,10 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Callable
 
-from speckit.generate.agents import Artifact, Coder, TestAuthor, coder_brief, test_brief
-from speckit.generate.conformance import ConformanceResult, Runner
-from speckit.model import Specification
-from speckit.validator import Diagnostic, validate, validate_all
+from genspec.generate.agents import Artifact, Coder, TestAuthor, coder_brief, test_brief
+from genspec.generate.conformance import ConformanceResult, Runner
+from genspec.model import Specification
+from genspec.validator import Diagnostic, validate, validate_all
 
 # A gate handler is called with (gate_type, spec_id, detail) and returns approval.
 GateHandler = Callable[[str, str, str], bool]

@@ -1,4 +1,4 @@
-# speckit — the spec is the code
+# genspec — the spec is the code
 
 > A radical shift for Genesis: the **specification** is the source of truth.
 > Generated source code is a build artifact — disposable and replaceable.
@@ -30,7 +30,7 @@ can be mechanically validated.
 
 ## What a spec must capture
 
-A speckit specification is **human-readable but semi-structured**, and it spans
+A genspec specification is **human-readable but semi-structured**, and it spans
 the full surface of a system across two axes:
 
 | Axis | One end | Other end |
@@ -60,14 +60,14 @@ already-shipped `src/genesis/state/machine.py`.
 ## Layout
 
 ```
-speckit/
+genspec/
 ├── README.md                    # this file — the paradigm
 ├── pyproject.toml               # isolated, zero-runtime-dependency package
 ├── specs/
 │   ├── format.spec.md           # the spec format, written in its own format (self-hosting)
 │   ├── state-machine.spec.md     # a model of existing Genesis code
 │   └── generate.spec.md         # a model of the generator (self-describing)
-├── src/speckit/
+├── src/genspec/
 │   ├── model.py                 # the high-fidelity model: typed dataclasses
 │   ├── parser.py                # .spec.md  ──▶  Specification
 │   ├── validator.py             # Specification ──▶ diagnostics (spec as source of validation)
@@ -76,37 +76,37 @@ speckit/
 │       ├── conformance.py       # run generated tests against generated code
 │       └── loop.py              # the iterative TDD loop + fault classification + gates
 └── tests/
-    ├── test_speckit.py
+    ├── test_genspec.py
     └── test_generate.py
 ```
 
 ## Use
 
 ```bash
-cd speckit
+cd genspec
 pip install -e ".[dev]"
 
 # Parse a spec and print its structured model
-python -m speckit show specs/state-machine.spec.md
+python -m genspec show specs/state-machine.spec.md
 
 # Validate specs: required sections, Given/When/Then completeness,
 # and that every `source:` file the spec claims to describe actually exists.
-python -m speckit validate specs/
+python -m genspec validate specs/
 
 pytest
 ```
 
-`speckit` has **no runtime dependencies** — the parser is a small hand-written
+`genspec` has **no runtime dependencies** — the parser is a small hand-written
 reader so the format stays inspectable and the package stays portable.
 
 ## Generation — the compiler half
 
-`speckit.generate` lowers a validated spec into code the way a compiler lowers
+`genspec.generate` lowers a validated spec into code the way a compiler lowers
 source, and it treats *generate* as a **typecheck on the spec**: its purpose is
 to find faults in the spec early, cheapest-first.
 
 ```bash
-python -m speckit validate specs/    # 1. is the spec internally consistent?
+python -m genspec validate specs/    # 1. is the spec internally consistent?
 # then, in code:
 Generator(test_author, coder, runner).generate(spec)
 ```

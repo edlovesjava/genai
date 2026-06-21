@@ -1,4 +1,4 @@
-"""Parse a ``.spec.md`` document into a :class:`~speckit.model.Specification`.
+"""Parse a ``.spec.md`` document into a :class:`~genspec.model.Specification`.
 
 The reader is hand-written and dependency-free on purpose: the spec format must
 stay portable and human-inspectable, so we accept a small, well-defined subset of
@@ -38,7 +38,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from speckit.model import (
+from genspec.model import (
     Abstraction,
     Scenario,
     Section,

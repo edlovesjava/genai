@@ -1,7 +1,7 @@
 """Validate specifications — the spec as the *source of validation*.
 
 If the spec is the source of truth, it must be checkable. This module verifies
-that a :class:`~speckit.model.Specification` is well-formed and faithfully
+that a :class:`~genspec.model.Specification` is well-formed and faithfully
 anchored to reality:
 
 * **Completeness** — every canonical section is present and non-empty.
@@ -20,7 +20,7 @@ from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 
-from speckit.model import CANONICAL_SECTIONS, Specification, StepKind
+from genspec.model import CANONICAL_SECTIONS, Specification, StepKind
 
 
 class Level(str, Enum):

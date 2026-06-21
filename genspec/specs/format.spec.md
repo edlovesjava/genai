@@ -1,15 +1,15 @@
 ---
-id: speckit.format
-title: The speckit Specification Format
+id: genspec.format
+title: The genspec Specification Format
 status: active
 abstraction: model
-source: [../src/speckit/parser.py, ../src/speckit/validator.py, ../src/speckit/model.py]
+source: [../src/genspec/parser.py, ../src/genspec/validator.py, ../src/genspec/model.py]
 depends: []
 ---
 
-# The speckit Specification Format
+# The genspec Specification Format
 
-This document specifies the speckit format *in its own format* — it is
+This document specifies the genspec format *in its own format* — it is
 self-hosting. Reading it is the fastest way to learn what a valid spec looks
 like, and validating it exercises the very rules it describes.
 
@@ -80,9 +80,9 @@ Then it emits an error diagnostic naming the missing clause
 
 ## Validation
 
-- `python -m speckit validate specs/` parses this file and reports zero errors.
+- `python -m genspec validate specs/` parses this file and reports zero errors.
 - The required-section check confirms all five canonical sections are present
   and non-empty.
 - The source-anchoring check confirms every path in `source:` exists relative to
   this document's directory.
-- `tests/test_speckit.py` round-trips this document through parse → validate.
+- `tests/test_genspec.py` round-trips this document through parse → validate.

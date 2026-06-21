@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "speckit"
+name = "genspec"
 version = "0.1.0"
 description = "Specifications as first-class, high-fidelity, validatable source of truth"
 requires-python = ">=3.11"
@@ -17,10 +17,10 @@ dev = [
 ]
 
 [project.scripts]
-speckit = "speckit.__main__:main"
+genspec = "genspec.__main__:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/speckit"]
+packages = ["src/genspec"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

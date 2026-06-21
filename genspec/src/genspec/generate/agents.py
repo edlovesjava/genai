@@ -18,7 +18,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Protocol, runtime_checkable
 
-from speckit.model import Specification
+from genspec.model import Specification
 
 
 @dataclass(frozen=True)

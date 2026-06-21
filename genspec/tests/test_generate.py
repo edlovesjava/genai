@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import pytest
 
-from speckit.generate import (
+from genspec.generate import (
     Artifact,
     ConformanceResult,
     Disposition,
@@ -17,7 +17,7 @@ from speckit.generate import (
     HumanGateRequired,
     PytestRunner,
 )
-from speckit.parser import parse_text
+from genspec.parser import parse_text
 
 VALID_SPEC = """\
 ---

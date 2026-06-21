@@ -10,7 +10,7 @@ depends: []
 # Task State Machine
 
 A reverse-engineered, high-fidelity model of Genesis's existing task state
-machine. It demonstrates that the speckit format describes **shipped code** as
+machine. It demonstrates that the genspec format describes **shipped code** as
 faithfully as it plans new work: every claim below is true of
 `src/genesis/state/machine.py` today.
 

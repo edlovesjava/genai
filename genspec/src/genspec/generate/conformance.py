@@ -22,7 +22,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol
 
-from speckit.generate.agents import Artifact
+from genspec.generate.agents import Artifact
 
 
 @dataclass(frozen=True)
@@ -50,7 +50,7 @@ class PytestRunner:
         self.timeout = timeout
 
     def run(self, code: Artifact, tests: Artifact) -> ConformanceResult:
-        with tempfile.TemporaryDirectory(prefix="speckit-conf-") as tmp:
+        with tempfile.TemporaryDirectory(prefix="genspec-conf-") as tmp:
             root = Path(tmp)
             (root / f"{code.module_name}.py").write_text(code.source, encoding="utf-8")
             (root / f"test_{code.module_name}.py").write_text(tests.source, encoding="utf-8")

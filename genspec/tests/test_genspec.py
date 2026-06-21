@@ -1,4 +1,4 @@
-"""Tests for the speckit parser and validator.
+"""Tests for the genspec parser and validator.
 
 These exercise the format end to end and confirm the shipped example specs are
 both parseable and valid — including that they stay anchored to real code.
@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from speckit import (
+from genspec import (
     Abstraction,
     Status,
     StepKind,
@@ -19,8 +19,8 @@ from speckit import (
     validate,
     validate_all,
 )
-from speckit.parser import SpecParseError
-from speckit.validator import Level, has_errors
+from genspec.parser import SpecParseError
+from genspec.validator import Level, has_errors
 
 SPECS_DIR = Path(__file__).resolve().parent.parent / "specs"
 

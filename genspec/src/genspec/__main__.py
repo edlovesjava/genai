@@ -1,7 +1,7 @@
-"""speckit CLI: ``show`` a spec's model, or ``validate`` a spec library.
+"""genspec CLI: ``show`` a spec's model, or ``validate`` a spec library.
 
-    python -m speckit show specs/state-machine.spec.md
-    python -m speckit validate specs/ [--root DIR]
+    python -m genspec show specs/state-machine.spec.md
+    python -m genspec validate specs/ [--root DIR]
 """
 
 from __future__ import annotations
@@ -10,9 +10,9 @@ import argparse
 import sys
 from pathlib import Path
 
-from speckit.model import Specification
-from speckit.parser import SpecParseError, parse_file
-from speckit.validator import Level, validate_all
+from genspec.model import Specification
+from genspec.parser import SpecParseError, parse_file
+from genspec.validator import Level, validate_all
 
 
 def _iter_spec_paths(paths: list[str]) -> list[Path]:
@@ -80,7 +80,7 @@ def _cmd_validate(args: argparse.Namespace) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="speckit", description=__doc__)
+    parser = argparse.ArgumentParser(prog="genspec", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
 
     p_show = sub.add_parser("show", help="parse specs and print their model")

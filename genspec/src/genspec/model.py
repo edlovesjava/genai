@@ -1,6 +1,6 @@
 """The high-fidelity model of a specification.
 
-A speckit ``Specification`` is the in-memory, typed form of a ``.spec.md`` file.
+A genspec ``Specification`` is the in-memory, typed form of a ``.spec.md`` file.
 It is deliberately a *model*, not a string: every dimension a spec must capture
 (intent, structure, behavior, qualities, validation) is a first-class field so
 the document can be validated, queried, and ultimately lowered into code.

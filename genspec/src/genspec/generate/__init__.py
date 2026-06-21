@@ -1,15 +1,15 @@
-"""speckit.generate — lower a validated spec into code, the TDD way.
+"""genspec.generate — lower a validated spec into code, the TDD way.
 
 Generation derives tests and production code *independently* from one spec, then
 runs them against each other. Agreement is evidence the spec is well-determined;
 disagreement is a spec fault found early. The orchestration lives in
-:mod:`speckit.generate.loop`; the LLM agents and the test runner are Protocols so
+:mod:`genspec.generate.loop`; the LLM agents and the test runner are Protocols so
 the loop is deterministically testable.
 """
 
 from __future__ import annotations
 
-from speckit.generate.agents import (
+from genspec.generate.agents import (
     Artifact,
     Coder,
     CoderBrief,
@@ -18,8 +18,8 @@ from speckit.generate.agents import (
     coder_brief,
     test_brief,
 )
-from speckit.generate.conformance import ConformanceResult, PytestRunner, Runner
-from speckit.generate.loop import (
+from genspec.generate.conformance import ConformanceResult, PytestRunner, Runner
+from genspec.generate.loop import (
     Disposition,
     Fault,
     GateHandler,

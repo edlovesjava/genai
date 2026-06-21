@@ -1,10 +1,10 @@
 ---
-id: speckit.generate
+id: genspec.generate
 title: Spec-to-Code Generation Loop
 status: active
 abstraction: model
-source: [../src/speckit/generate/loop.py, ../src/speckit/generate/agents.py, ../src/speckit/generate/conformance.py]
-depends: [speckit.format]
+source: [../src/genspec/generate/loop.py, ../src/genspec/generate/agents.py, ../src/genspec/generate/conformance.py]
+depends: [genspec.format]
 ---
 
 # Spec-to-Code Generation Loop
@@ -92,4 +92,4 @@ Then each spec is generated only after the specs it depends on
 - `tests/test_generate.py` drives every disposition with scripted agents and a
   fake runner, and exercises the real `PytestRunner` end to end.
 - The source-anchoring check confirms the three `source:` modules exist.
-- `depends: [speckit.format]` resolves within this spec library.
+- `depends: [genspec.format]` resolves within this spec library.
