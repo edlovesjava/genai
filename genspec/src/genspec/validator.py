@@ -20,7 +20,7 @@ from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 
-from genspec.model import CANONICAL_SECTIONS, Specification, StepKind
+from genspec.model import Specification, StepKind
 
 
 class Level(str, Enum):
@@ -85,7 +85,9 @@ def validate_all(specs: list[Specification], *, root: str | Path | None = None) 
 
 
 def _check_sections(spec: Specification, diags: list[Diagnostic]) -> None:
-    for name in CANONICAL_SECTIONS:
+    # Required sections depend on the spec's kind (intent-first: an intent spec
+    # legitimately omits structure/behavior — those are bid outputs).
+    for name in spec.required_sections:
         section = spec.section(name)
         if section is None:
             diags.append(

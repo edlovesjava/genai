@@ -36,6 +36,31 @@ class Abstraction(str, Enum):
     IMPLEMENTATION = "implementation"
 
 
+class Kind(str, Enum):
+    """What a spec document *is*, which decides what it must contain.
+
+    Intent-first: the durable artifact is the ``INTENT`` spec (the "RFP") — it
+    states the why and the constraints, but deliberately does *not* fix the
+    structure or behavior, because those are what competing designs propose. A
+    ``DESIGN`` spec is one such proposal (a bid / ADR) bound to an intent. A
+    ``COMPONENT`` spec is the full, implementation-anchored model of one unit
+    (the original genspec spec shape).
+    """
+
+    INTENT = "intent"
+    DESIGN = "design"
+    COMPONENT = "component"
+
+
+# Which canonical sections each kind is required to carry. Intent specs omit
+# structure/behavior on purpose: those are bid outputs, not intent inputs.
+REQUIRED_SECTIONS_BY_KIND: dict[Kind, tuple[str, ...]] = {
+    Kind.INTENT: ("intent", "qualities", "validation"),
+    Kind.DESIGN: ("intent", "structure", "behavior", "validation"),
+    Kind.COMPONENT: CANONICAL_SECTIONS,
+}
+
+
 class Status(str, Enum):
     """Lifecycle of a specification document itself."""
 
@@ -111,6 +136,7 @@ class Specification:
 
     id: str
     title: str
+    kind: Kind = Kind.COMPONENT
     status: Status = Status.DRAFT
     abstraction: Abstraction = Abstraction.MODEL
     # Source files this spec claims to describe — the linkage that lets the
@@ -120,6 +146,11 @@ class Specification:
     depends: list[str] = field(default_factory=list)
     sections: dict[str, Section] = field(default_factory=dict)
     path: str | None = None
+
+    @property
+    def required_sections(self) -> tuple[str, ...]:
+        """The canonical sections this spec must carry, given its kind."""
+        return REQUIRED_SECTIONS_BY_KIND[self.kind]
 
     def section(self, name: str) -> Section | None:
         """Return a section by canonical name, or ``None`` if absent."""

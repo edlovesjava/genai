@@ -40,6 +40,7 @@ from pathlib import Path
 
 from genspec.model import (
     Abstraction,
+    Kind,
     Scenario,
     Section,
     Specification,
@@ -77,6 +78,7 @@ def parse_text(text: str) -> Specification:
     spec = Specification(
         id=str(spec_id),
         title=str(meta.get("title") or spec_id),
+        kind=_coerce_enum(Kind, meta.get("kind"), Kind.COMPONENT),
         status=_coerce_enum(Status, meta.get("status"), Status.DRAFT),
         abstraction=_coerce_enum(Abstraction, meta.get("abstraction"), Abstraction.MODEL),
         source=_as_list(meta.get("source")),

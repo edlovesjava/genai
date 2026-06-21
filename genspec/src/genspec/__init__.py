@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from genspec.model import (
     Abstraction,
+    Kind,
     Scenario,
     Section,
     Specification,
@@ -21,6 +22,7 @@ from genspec.validator import Diagnostic, Level, has_errors, validate, validate_
 
 __all__ = [
     "Abstraction",
+    "Kind",
     "Scenario",
     "Section",
     "Specification",
