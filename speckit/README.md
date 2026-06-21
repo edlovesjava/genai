@@ -65,13 +65,19 @@ speckit/
 ├── pyproject.toml               # isolated, zero-runtime-dependency package
 ├── specs/
 │   ├── format.spec.md           # the spec format, written in its own format (self-hosting)
-│   └── state-machine.spec.md     # a model of existing Genesis code
+│   ├── state-machine.spec.md     # a model of existing Genesis code
+│   └── generate.spec.md         # a model of the generator (self-describing)
 ├── src/speckit/
 │   ├── model.py                 # the high-fidelity model: typed dataclasses
 │   ├── parser.py                # .spec.md  ──▶  Specification
-│   └── validator.py             # Specification ──▶ diagnostics (spec as source of validation)
+│   ├── validator.py             # Specification ──▶ diagnostics (spec as source of validation)
+│   └── generate/                # the "compiler" half — spec ──▶ disposable code
+│       ├── agents.py            # independent TestAuthor / Coder (Protocols)
+│       ├── conformance.py       # run generated tests against generated code
+│       └── loop.py              # the iterative TDD loop + fault classification + gates
 └── tests/
-    └── test_speckit.py
+    ├── test_speckit.py
+    └── test_generate.py
 ```
 
 ## Use
@@ -93,9 +99,42 @@ pytest
 `speckit` has **no runtime dependencies** — the parser is a small hand-written
 reader so the format stays inspectable and the package stays portable.
 
+## Generation — the compiler half
+
+`speckit.generate` lowers a validated spec into code the way a compiler lowers
+source, and it treats *generate* as a **typecheck on the spec**: its purpose is
+to find faults in the spec early, cheapest-first.
+
+```bash
+python -m speckit validate specs/    # 1. is the spec internally consistent?
+# then, in code:
+Generator(test_author, coder, runner).generate(spec)
+```
+
+The loop derives **two artifacts from one spec, independently** — a test module
+(from behavior + qualities) and a production module (from intent + structure) —
+by two agents that never see each other's output. What happens next *is* the
+typecheck:
+
+| Stage | Question | Outcome |
+|-------|----------|---------|
+| Static pre-validation | Is the spec internally consistent? | `INVALID` → SPEC fault, nothing generated |
+| Independent derivation | Do the two interpretations agree? | tests pass → `VALIDATED` |
+| Bounded reconciliation | Is the gap just a code error? | TDD converges → `RECONCILED` (CODE fault) |
+| — | …or a spec ambiguity? | can't converge → `SPEC_SUSPECT`, escalate to human |
+| Acceptance gate | Is the spec *correct*, not merely consistent? | human may `REJECT` |
+
+Two questions stay distinct: **does the code match the spec** (verification, via
+conformance) and **is the spec correct** (validation, only a human gate can
+answer — both agents can be consistently wrong). So the gate always runs, and a
+suspected spec fault always escalates rather than auto-resolving. This is where
+the paradigm reconnects to Genesis's own primitives: **human gates** and
+**dependency-ordered decomposition** (a spec library is generated in
+`depends`-topological order).
+
 ## Status
 
-This is the foundation: the format, the model, the parser, and the validator —
-the parts that make a spec *checkable*. The next layer (not yet built) is the
-**generator**: the agent path that lowers a validated spec into source code, the
-"compiler" half of the analogy.
+The durable half (format, model, parser, validator) and the compiler half
+(independent-agent TDD generation with gates) are in place and tested. The agents
+themselves are Protocols: a real Claude-backed `TestAuthor`/`Coder` plugs into the
+same loop the tests drive with deterministic doubles.
