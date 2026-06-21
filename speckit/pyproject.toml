@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "speckit"
+version = "0.1.0"
+description = "Specifications as first-class, high-fidelity, validatable source of truth"
+requires-python = ">=3.11"
+# Intentionally zero runtime dependencies: the spec format must stay portable
+# and the parser stays hand-written so specs remain inspectable.
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+]
+
+[project.scripts]
+speckit = "speckit.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/speckit"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
